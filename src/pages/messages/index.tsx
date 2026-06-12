@@ -111,8 +111,9 @@ const MessagesPage: React.FC = () => {
             <Text className={styles.label}>{tab.label}</Text>
             {unreadCount[tab.type] > 0 && (
               <Text className={styles.count}>
-              {unreadCount[tab.type]}
-            </Text>
+                {unreadCount[tab.type] > 99 ? '99+' : unreadCount[tab.type]}
+              </Text>
+            )}
           </View>
         ))}
       </View>

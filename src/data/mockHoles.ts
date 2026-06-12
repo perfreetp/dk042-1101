@@ -38,7 +38,7 @@ export function generateMockHoles(count: number = 15): Hole[] {
     const expiresAt = new Date(createdAt.getTime() + expireHours * 60 * 60 * 1000);
 
     holes.push({
-      id: `hole_${i}_${Date.now()}`,
+      id: `hole_${i}`,
       content: contents[i % contents.length],
       emotion,
       mode,
