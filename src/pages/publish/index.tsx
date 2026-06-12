@@ -1,6 +1,6 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { View, Text, Textarea, ScrollView } from '@tarojs/components';
-import Taro, { useRouter, useDidShow } from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 import type { EmotionType, PublishMode, VisibleDuration, AnonymousAvatar, Draft } from '@/types';
@@ -9,11 +9,9 @@ import AvatarSelector from '@/components/AvatarSelector';
 import { usePublish } from '@/hooks/usePublish';
 import { formatDuration } from '@/utils/time';
 import { getDrafts, deleteDraft } from '@/services/holeService';
+import storage from '@/utils/storage';
 
 const PublishPage: React.FC = () => {
-  const router = useRouter();
-  const draftId = router.params.draftId as string | undefined;
-
   const {
     content,
     setContent,
@@ -42,32 +40,28 @@ const PublishPage: React.FC = () => {
   const [anonymousName] = useState(getAnonymousName());
   const [playingVoice, setPlayingVoice] = useState(false);
   const [currentDraft, setCurrentDraft] = useState<Draft | null>(null);
-
-  useEffect(() => {
-    if (draftId) {
-      const loadDraft = async () => {
-        try {
-          const drafts = await getDrafts();
-          const draft = drafts.find(d => d.id === draftId);
-          if (draft) {
-            setCurrentDraft(draft);
-            handleLoadDraft(draft);
-            Taro.showToast({ title: '已加载草稿', icon: 'success' });
-          }
-        } catch (error) {
-          console.error('[PublishPage] 加载草稿失败', error);
-          Taro.showToast({ title: '加载草稿失败', icon: 'none' });
-        }
-      };
-      loadDraft();
-    } else {
-      resetForm();
-      setCurrentDraft(null);
-    }
-  }, [draftId, handleLoadDraft, resetForm]);
+  const draftLoadedRef = useRef<string | null>(null);
 
   useDidShow(() => {
-    console.log('[PublishPage] 页面显示');
+    const editingDraftId = storage.get<string | null>(storage.keys.DRAFTS_EDITING, null);
+    if (editingDraftId && editingDraftId !== draftLoadedRef.current) {
+      draftLoadedRef.current = editingDraftId;
+      storage.set(storage.keys.DRAFTS_EDITING, null);
+      getDrafts().then(drafts => {
+        const draft = drafts.find(d => d.id === editingDraftId);
+        if (draft) {
+          setCurrentDraft(draft);
+          handleLoadDraft(draft);
+          Taro.showToast({ title: '已加载草稿', icon: 'success' });
+        }
+      }).catch(error => {
+        console.error('[PublishPage] 加载草稿失败', error);
+      });
+    } else if (!editingDraftId && draftLoadedRef.current) {
+      draftLoadedRef.current = null;
+      setCurrentDraft(null);
+      resetForm();
+    }
   });
 
   const handlePublishWithDraft = useCallback(async () => {
@@ -77,6 +71,8 @@ const PublishPage: React.FC = () => {
       } catch (error) {
         console.error('[PublishPage] 删除草稿失败', error);
       }
+      setCurrentDraft(null);
+      draftLoadedRef.current = null;
     }
     await handlePublish();
   }, [currentDraft, handlePublish]);

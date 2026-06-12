@@ -152,6 +152,11 @@ export async function getComments(holeId: string): Promise<Comment[]> {
   if (comments.length === 0) {
     comments = generateMockComments(holeId, 5);
     setHoleComments(holeId, comments);
+    const hole = mockHoles.find(h => h.id === holeId);
+    if (hole) {
+      hole.comments = comments.length;
+      saveHoleToStorage(hole);
+    }
   }
   
   return comments;

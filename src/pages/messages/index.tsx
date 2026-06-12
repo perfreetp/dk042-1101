@@ -97,7 +97,7 @@ const MessagesPage: React.FC = () => {
       <View className={styles.header}>
         <Text className={styles.title}>💬 消息中心</Text>
         <View className={styles.markAllBtn} onClick={handleMarkAll}>
-          <Text>✓</Text</Text>
+          <Text>全部已读</Text>
         </View>
       </View>
 

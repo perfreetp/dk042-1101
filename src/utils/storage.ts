@@ -3,6 +3,7 @@ import Taro from '@tarojs/taro';
 const STORAGE_KEYS = {
   USER_SETTINGS: 'user_settings',
   DRAFTS: 'drafts',
+  DRAFTS_EDITING: 'drafts_editing',
   MY_HOLES: 'my_holes',
   PUBLISHED_HOLES: 'published_holes',
   HOLE_COMMENTS: 'hole_comments',

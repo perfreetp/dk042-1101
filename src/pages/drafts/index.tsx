@@ -6,6 +6,7 @@ import type { Draft } from '@/types';
 import { getDrafts, deleteDraft, publishHole } from '@/services/holeService';
 import { ANONYMOUS_AVATARS, getEmotionConfig, getPublishModeConfig, getVisibleDurationConfig } from '@/utils/emotion';
 import { formatTime } from '@/utils/time';
+import storage from '@/utils/storage';
 
 const DraftsPage: React.FC = () => {
   const [drafts, setDrafts] = useState<Draft[]>([]);
@@ -32,8 +33,9 @@ const DraftsPage: React.FC = () => {
   });
 
   const handleEdit = useCallback((draft: Draft) => {
-    Taro.navigateTo({
-      url: `/pages/publish/index?draftId=${draft.id}`,
+    storage.set(storage.keys.DRAFTS_EDITING, draft.id);
+    Taro.switchTab({
+      url: '/pages/publish/index',
     });
   }, []);
 

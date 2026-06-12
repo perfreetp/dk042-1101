@@ -156,8 +156,9 @@ const DetailPage: React.FC = () => {
         holeId: hole.id,
         content: commentText.trim(),
       });
-      setComments(prev => [...prev, newComment]);
-      setHole(prev => prev ? { ...prev, comments: prev.comments + 1 } : null);
+      const updatedComments = [...comments, newComment];
+      setComments(updatedComments);
+      setHole(prev => prev ? { ...prev, comments: updatedComments.length } : null);
       setCommentText('');
       Taro.showToast({ title: '回复成功', icon: 'success' });
     } catch (error) {
