@@ -1,30 +1,27 @@
 import type { Hole, Comment, FilterType, PaginationParams, PaginatedResult, ReportType, Draft, EmotionType, PublishMode, VisibleDuration } from '@/types';
-import { mockHoles } from '@/data/mockHoles';
+import { mockHoles, generateMockHoles } from '@/data/mockHoles';
 import { generateMockComments } from '@/data/mockComments';
 import { mockDrafts } from '@/data/mockUser';
 import storage from '@/utils/storage';
 import { getExpireTime, generateTimeId } from '@/utils/time';
 import { getRandomAvatar, getAnonymousName } from '@/utils/emotion';
 
-function getMyHoleIds(): string[] {
-  return storage.get<string[]>(storage.keys.MY_HOLES, []);
+let initialized = false;
+
+function getPublishedHoles(): Hole[] {
+  return storage.get<Hole[]>(storage.keys.PUBLISHED_HOLES, []);
 }
 
-function addMyHoleId(id: string): void {
-  const ids = getMyHoleIds();
-  if (!ids.includes(id)) {
-    ids.unshift(id);
-    storage.set(storage.keys.MY_HOLES, ids);
-  }
+function setPublishedHoles(holes: Hole[]): void {
+  storage.set(storage.keys.PUBLISHED_HOLES, holes);
 }
 
-function removeMyHoleId(id: string): void {
-  const ids = getMyHoleIds();
-  const index = ids.indexOf(id);
-  if (index > -1) {
-    ids.splice(index, 1);
-    storage.set(storage.keys.MY_HOLES, ids);
-  }
+function getDeletedHoleIds(): string[] {
+  return storage.get<string[]>(storage.keys.DELETED_HOLES, []);
+}
+
+function addDeletedHoleId(id: string): void {
+  storage.addToSet(storage.keys.DELETED_HOLES, id);
 }
 
 function getHoleComments(holeId: string): Comment[] {
@@ -38,13 +35,52 @@ function setHoleComments(holeId: string, comments: Comment[]): void {
   storage.set(storage.keys.HOLE_COMMENTS, allComments);
 }
 
+export function initMockData(): void {
+  if (initialized) return;
+  initialized = true;
+
+  const published = getPublishedHoles();
+  const deleted = getDeletedHoleIds();
+
+  published.forEach(hole => {
+    const exists = mockHoles.find(h => h.id === hole.id);
+    if (!exists) {
+      mockHoles.unshift(hole);
+    } else {
+      const idx = mockHoles.findIndex(h => h.id === hole.id);
+      mockHoles[idx] = { ...exists, ...hole };
+    }
+  });
+
+  for (let i = mockHoles.length - 1; i >= 0; i--) {
+    if (deleted.includes(mockHoles[i].id)) {
+      mockHoles.splice(i, 1);
+    }
+  }
+
+  console.log('[HoleService] 数据初始化完成，mockHoles数量:', mockHoles.length);
+}
+
+export function ensureInitialized(): void {
+  if (!initialized) {
+    initMockData();
+  }
+}
+
+function getAllActiveHoles(): Hole[] {
+  ensureInitialized();
+  const deleted = getDeletedHoleIds();
+  return mockHoles.filter(h => !deleted.includes(h.id));
+}
+
 export async function getHoleList(
   filter: FilterType,
   params: PaginationParams
 ): Promise<PaginatedResult<Hole>> {
   console.log('[HoleService] 获取树洞列表', filter, params);
+  ensureInitialized();
 
-  let holes = [...mockHoles];
+  let holes = [...getAllActiveHoles()];
 
   if (filter === 'nearby') {
     holes = holes.filter(h => h.location);
@@ -81,7 +117,12 @@ export async function getHoleList(
 
 export async function getHoleDetail(id: string): Promise<Hole | null> {
   console.log('[HoleService] 获取树洞详情', id);
-  const hole = mockHoles.find(h => h.id === id) || null;
+  ensureInitialized();
+
+  const deleted = getDeletedHoleIds();
+  if (deleted.includes(id)) return null;
+
+  const hole = getAllActiveHoles().find(h => h.id === id) || null;
 
   if (hole) {
     const blockedIds = storage.get<string[]>(storage.keys.BLOCKED_HOLES, []);
@@ -116,6 +157,23 @@ export async function getComments(holeId: string): Promise<Comment[]> {
   return comments;
 }
 
+function saveHoleToStorage(hole: Hole): void {
+  const published = getPublishedHoles();
+  const idx = published.findIndex(h => h.id === hole.id);
+  if (idx > -1) {
+    published[idx] = { ...hole };
+  } else {
+    published.unshift({ ...hole });
+  }
+  setPublishedHoles(published);
+
+  const myHoles = storage.get<string[]>(storage.keys.MY_HOLES, []);
+  if (!myHoles.includes(hole.id)) {
+    myHoles.unshift(hole.id);
+    storage.set(storage.keys.MY_HOLES, myHoles);
+  }
+}
+
 export async function publishHole(params: {
   content: string;
   emotion: EmotionType;
@@ -127,6 +185,7 @@ export async function publishHole(params: {
   voiceDuration?: number;
 }): Promise<Hole> {
   console.log('[HoleService] 发布树洞', params);
+  ensureInitialized();
 
   const avatar = getRandomAvatar();
   const newHole: Hole = {
@@ -154,8 +213,7 @@ export async function publishHole(params: {
   };
 
   mockHoles.unshift(newHole);
-  addMyHoleId(newHole.id);
-  
+  saveHoleToStorage(newHole);
   setHoleComments(newHole.id, []);
 
   return newHole;
@@ -163,6 +221,7 @@ export async function publishHole(params: {
 
 export async function likeHole(id: string): Promise<boolean> {
   console.log('[HoleService] 点赞树洞', id);
+  ensureInitialized();
   const hole = mockHoles.find(h => h.id === id);
   if (hole) {
     const isLiked = storage.isInSet(storage.keys.LIKED_HOLES, id);
@@ -173,6 +232,7 @@ export async function likeHole(id: string): Promise<boolean> {
       storage.addToSet(storage.keys.LIKED_HOLES, id);
       hole.likes += 1;
     }
+    saveHoleToStorage(hole);
     return !isLiked;
   }
   return false;
@@ -180,6 +240,7 @@ export async function likeHole(id: string): Promise<boolean> {
 
 export async function hugHole(id: string): Promise<boolean> {
   console.log('[HoleService] 拥抱树洞', id);
+  ensureInitialized();
   const hole = mockHoles.find(h => h.id === id);
   if (hole) {
     const isHugged = storage.isInSet(storage.keys.HUGGED_HOLES, id);
@@ -190,6 +251,7 @@ export async function hugHole(id: string): Promise<boolean> {
       storage.addToSet(storage.keys.HUGGED_HOLES, id);
       hole.hugs += 1;
     }
+    saveHoleToStorage(hole);
     return !isHugged;
   }
   return false;
@@ -197,6 +259,7 @@ export async function hugHole(id: string): Promise<boolean> {
 
 export async function favoriteHole(id: string): Promise<boolean> {
   console.log('[HoleService] 收藏树洞', id);
+  ensureInitialized();
   const hole = mockHoles.find(h => h.id === id);
   if (hole) {
     const isFavorited = storage.isInSet(storage.keys.FAVORITED_HOLES, id);
@@ -207,6 +270,7 @@ export async function favoriteHole(id: string): Promise<boolean> {
       storage.addToSet(storage.keys.FAVORITED_HOLES, id);
       hole.favorites += 1;
     }
+    saveHoleToStorage(hole);
     return !isFavorited;
   }
   return false;
@@ -239,6 +303,7 @@ export async function addComment(params: {
   content: string;
 }): Promise<Comment> {
   console.log('[HoleService] 添加评论', params);
+  ensureInitialized();
   const avatar = getRandomAvatar();
   const newComment: Comment = {
     id: `comment_${params.holeId}_${generateTimeId()}`,
@@ -259,6 +324,7 @@ export async function addComment(params: {
   const hole = mockHoles.find(h => h.id === params.holeId);
   if (hole) {
     hole.comments += 1;
+    saveHoleToStorage(hole);
   }
 
   return newComment;
@@ -290,18 +356,26 @@ export async function deleteDraft(id: string): Promise<void> {
 
 export async function getHistoryHoles(): Promise<Hole[]> {
   console.log('[HoleService] 获取历史树洞');
-  const myHoleIds = getMyHoleIds();
-  
+  ensureInitialized();
+
+  const myHoleIds = storage.get<string[]>(storage.keys.MY_HOLES, []);
+  const deleted = getDeletedHoleIds();
+
   const myHoles = myHoleIds
+    .filter(id => !deleted.includes(id))
     .map(id => mockHoles.find(h => h.id === id))
     .filter((h): h is Hole => h !== undefined);
-  
+
   if (myHoles.length === 0) {
-    const defaultHoleId = 'hole_0_' + mockHoles[0]?.id.split('_')[2];
-    const existingFirst = mockHoles[0];
-    if (existingFirst && !myHoleIds.includes(existingFirst.id)) {
-      addMyHoleId(existingFirst.id);
+    const existingFirst = getAllActiveHoles()[0];
+    if (existingFirst) {
+      const myHolesList = storage.get<string[]>(storage.keys.MY_HOLES, []);
+      if (!myHolesList.includes(existingFirst.id)) {
+        myHolesList.unshift(existingFirst.id);
+        storage.set(storage.keys.MY_HOLES, myHolesList);
+      }
       myHoles.push(existingFirst);
+      saveHoleToStorage(existingFirst);
     }
   }
 
@@ -321,11 +395,22 @@ export async function getHistoryHoles(): Promise<Hole[]> {
 
 export async function deleteHole(id: string): Promise<void> {
   console.log('[HoleService] 删除树洞', id);
+  ensureInitialized();
+
   const index = mockHoles.findIndex(h => h.id === id);
   if (index > -1) {
     mockHoles.splice(index, 1);
   }
-  removeMyHoleId(id);
+
+  addDeletedHoleId(id);
+
+  const published = getPublishedHoles();
+  const filtered = published.filter(h => h.id !== id);
+  setPublishedHoles(filtered);
+
+  const myHoles = storage.get<string[]>(storage.keys.MY_HOLES, []);
+  const filteredMy = myHoles.filter(hid => hid !== id);
+  storage.set(storage.keys.MY_HOLES, filteredMy);
 }
 
 export default {
@@ -345,4 +430,6 @@ export default {
   deleteDraft,
   getHistoryHoles,
   deleteHole,
+  initMockData,
+  ensureInitialized,
 };

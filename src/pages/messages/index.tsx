@@ -7,6 +7,7 @@ import type { MessageType, Message } from '@/types';
 import MessageItem from '@/components/MessageItem';
 import EmptyState from '@/components/EmptyState';
 import { getMessageList, markAllAsRead, getUnreadCount, markAsRead } from '@/services/messageService';
+import { getHoleDetail } from '@/services/holeService';
 
 const TABS: { type: MessageType; label: string }[] = [
   { type: 'reply', label: '回复' },
@@ -52,7 +53,7 @@ const MessagesPage: React.FC = () => {
     setActiveTab(type);
   }, []);
 
-  const handleMessageClick = useCallback((message: Message) => {
+  const handleMessageClick = useCallback(async (message: Message) => {
     if (!message.isRead) {
       markAsRead(message.id);
       setMessages(prev =>
@@ -64,9 +65,19 @@ const MessagesPage: React.FC = () => {
       }));
     }
     if (message.holeId) {
-      Taro.navigateTo({
-        url: `/pages/detail/index?id=${message.holeId}`,
-      });
+      try {
+        const hole = await getHoleDetail(message.holeId);
+        if (!hole) {
+          Taro.showToast({ title: '该内容已不存在', icon: 'none' });
+          return;
+        }
+        Taro.navigateTo({
+          url: `/pages/detail/index?id=${message.holeId}`,
+        });
+      } catch (error) {
+        console.error('[MessagesPage] 检查树洞失败', error);
+        Taro.showToast({ title: '该内容已不存在', icon: 'none' });
+      }
     }
   }, []);
 

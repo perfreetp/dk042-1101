@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro, { useDidShow, usePullDownRefresh, useReachBottom } from '@tarojs/taro';
 import classnames from 'classnames';
@@ -30,8 +30,15 @@ const PlazaPage: React.FC = () => {
     handleBlock,
   } = useHoleList(filter);
 
+  const didFirstMount = useRef(false);
+
   useDidShow(() => {
     console.log('[PlazaPage] 页面显示');
+    if (didFirstMount.current) {
+      onRefresh();
+    } else {
+      didFirstMount.current = true;
+    }
   });
 
   usePullDownRefresh(() => {
