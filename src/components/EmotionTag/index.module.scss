@@ -1,0 +1,25 @@
+@use '@/styles/variables.scss' as *;
+
+.emotionTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 6rpx 16rpx;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  white-space: nowrap;
+  transition: all $transition-base;
+
+  &.active {
+    transform: scale(1.05);
+  }
+
+  .emoji {
+    font-size: 28rpx;
+    line-height: 1;
+  }
+
+  .label {
+    font-weight: $font-weight-medium;
+  }
+}

@@ -1,0 +1,59 @@
+@use '@/styles/variables.scss' as *;
+
+.avatarSelector {
+  .title {
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    margin-bottom: $spacing-md;
+  }
+
+  .avatarGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+  }
+
+  .avatarItem {
+    width: 100rpx;
+    height: 100rpx;
+    border-radius: $radius-round;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56rpx;
+    line-height: 1;
+    border: 4rpx solid transparent;
+    transition: all $transition-base;
+    cursor: pointer;
+
+    &.selected {
+      border-color: $color-primary;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      opacity: 0.8;
+    }
+  }
+
+  .avatarName {
+    margin-top: $spacing-lg;
+    padding: $spacing-md;
+    background: $color-bg-tag;
+    border-radius: $radius-md;
+    text-align: center;
+
+    .label {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+      margin-bottom: $spacing-xs;
+    }
+
+    .name {
+      font-size: $font-size-md;
+      font-weight: $font-weight-medium;
+      color: $color-primary;
+    }
+  }
+}

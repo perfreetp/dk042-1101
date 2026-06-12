@@ -1,0 +1,110 @@
+@use '@/styles/variables.scss' as *;
+
+.messagesPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+
+  .header {
+    background: $color-primary-gradient;
+    padding: $spacing-lg $page-padding;
+    padding-top: calc(env(safe-area-inset-top) + #{$spacing-lg});
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .title {
+      font-size: $font-size-xxl;
+      font-weight: $font-weight-bold;
+      color: $color-text-white;
+    }
+
+    .markAllBtn {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      padding: $spacing-sm $spacing-md;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: $radius-button;
+      font-size: $font-size-sm;
+      color: $color-text-white;
+
+      &:active {
+        transform: scale(0.96);
+      }
+    }
+  }
+
+  .tabBar {
+    display: flex;
+    background: $color-bg-card;
+    padding: $spacing-sm $page-padding;
+    box-shadow: $shadow-float;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    .tabItem {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: $spacing-sm 0;
+      position: relative;
+      transition: all $transition-base;
+
+      .label {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+        transition: all $transition-base;
+      }
+
+      .count {
+        position: absolute;
+        top: 4rpx;
+        right: 20rpx;
+        min-width: 32rpx;
+        height: 32rpx;
+        line-height: 32rpx;
+        padding: 0 8rpx;
+        background: $color-error;
+        color: $color-text-white;
+        font-size: 20rpx;
+        border-radius: $radius-round;
+        text-align: center;
+      }
+
+      &.active {
+        .label {
+          color: $color-primary;
+          font-weight: $font-weight-semibold;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          width: 48rpx;
+          height: 6rpx;
+          background: $color-primary;
+          border-radius: 4rpx;
+        }
+      }
+    }
+  }
+
+  .content {
+    padding: $spacing-md $page-padding;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 120rpx);
+  }
+
+  .messageList {
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: 0 $spacing-lg;
+    box-shadow: $shadow-card;
+  }
+
+  .emptyWrap {
+    padding-top: 100rpx;
+  }
+}

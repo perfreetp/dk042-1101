@@ -1,0 +1,110 @@
+@import '@/styles/theme.scss';
+
+.blacklistPage {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #F5F3FF 0%, #FAF8FF 100%);
+  padding: 24rpx;
+}
+
+.card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 2rpx 12rpx rgba(124, 92, 255, 0.08);
+}
+
+.sectionTitle {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 24rpx;
+}
+
+.tip {
+  font-size: 24rpx;
+  color: #6B7280;
+  line-height: 1.6;
+  padding: 20rpx;
+  background: #FEF3C7;
+  border-radius: 16rpx;
+  border-left: 6rpx solid #F59E0B;
+  margin-bottom: 24rpx;
+}
+
+.userList {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.userItem {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #F9FAFB;
+  border-radius: 16rpx;
+}
+
+.avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.userInfo {
+  flex: 1;
+  min-width: 0;
+
+  .name {
+    font-size: 28rpx;
+    font-weight: 500;
+    color: #1F2937;
+    margin-bottom: 8rpx;
+  }
+
+  .meta {
+    font-size: 24rpx;
+    color: #9CA3AF;
+  }
+}
+
+.removeBtn {
+  padding: 12rpx 24rpx;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 32rpx;
+  font-size: 24rpx;
+  color: #EF4444;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.emptyWrap {
+  padding: 120rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyIcon {
+  font-size: 100rpx;
+  margin-bottom: 24rpx;
+}
+
+.emptyTitle {
+  font-size: 30rpx;
+  color: #374151;
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+
+.emptyDesc {
+  font-size: 26rpx;
+  color: #9CA3AF;
+}

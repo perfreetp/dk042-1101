@@ -1,0 +1,97 @@
+@use '@/styles/variables.scss' as *;
+
+.plazaPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+
+  .header {
+    background: $color-primary-gradient;
+    padding: $spacing-lg $page-padding;
+    padding-top: calc(env(safe-area-inset-top) + #{$spacing-lg});
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .title {
+      font-size: $font-size-xxl;
+      font-weight: $font-weight-bold;
+      color: $color-text-white;
+    }
+
+    .helpBtn {
+      width: 72rpx;
+      height: 72rpx;
+      border-radius: $radius-round;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36rpx;
+      transition: all $transition-base;
+
+      &:active {
+        transform: scale(0.9);
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+
+  .filterBar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: $color-bg-card;
+    padding: $spacing-md $page-padding;
+    box-shadow: $shadow-float;
+
+    .filterScroll {
+      @include scroll-x-container;
+    }
+
+    .filterItem {
+      @include scroll-x-item(auto);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16rpx 40rpx;
+      margin-right: $spacing-md;
+      border-radius: $radius-button;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: $color-text-secondary;
+      background: $color-bg-page;
+      transition: all $transition-base;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &.active {
+        background: $color-bg-tag;
+        color: $color-primary;
+        font-weight: $font-weight-semibold;
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+    }
+  }
+
+  .content {
+    padding: $spacing-md $page-padding;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 120rpx);
+
+    .loadingMore,
+    .noMore {
+      text-align: center;
+      padding: $spacing-xl 0;
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .emptyWrap {
+    padding-top: 100rpx;
+  }
+}

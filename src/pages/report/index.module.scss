@@ -1,0 +1,154 @@
+@import '@/styles/theme.scss';
+
+.reportPage {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #F5F3FF 0%, #FAF8FF 100%);
+  padding: 24rpx;
+  padding-bottom: 180rpx;
+}
+
+.card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(124, 92, 255, 0.08);
+}
+
+.sectionTitle {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 24rpx;
+}
+
+.typeList {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.typeItem {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  border-radius: 16rpx;
+  background: #F9FAFB;
+  border: 2rpx solid transparent;
+  transition: all 0.2s ease;
+
+  &.selected {
+    background: rgba(124, 92, 255, 0.08);
+    border-color: $color-primary;
+  }
+
+  .icon {
+    font-size: 40rpx;
+    margin-right: 20rpx;
+  }
+
+  .info {
+    flex: 1;
+
+    .title {
+      font-size: 28rpx;
+      font-weight: 500;
+      color: #1F2937;
+      margin-bottom: 4rpx;
+    }
+
+    .desc {
+      font-size: 24rpx;
+      color: #6B7280;
+    }
+  }
+
+  .check {
+    width: 40rpx;
+    height: 40rpx;
+    border-radius: 50%;
+    border: 2rpx solid #D1D5DB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.checked {
+      background: $color-primary;
+      border-color: $color-primary;
+
+      Text {
+        color: #fff;
+        font-size: 24rpx;
+      }
+    }
+  }
+}
+
+.textareaWrapper {
+  background: #F9FAFB;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  border: 2rpx solid #E5E7EB;
+
+  &.focused {
+    border-color: $color-primary;
+  }
+}
+
+.textarea {
+  width: 100%;
+  min-height: 200rpx;
+  font-size: 28rpx;
+  color: #1F2937;
+  line-height: 1.6;
+}
+
+.count {
+  text-align: right;
+  font-size: 24rpx;
+  color: #9CA3AF;
+  margin-top: 8rpx;
+}
+
+.tip {
+  font-size: 24rpx;
+  color: #6B7280;
+  line-height: 1.6;
+  padding: 20rpx;
+  background: #FEF3C7;
+  border-radius: 16rpx;
+  border-left: 6rpx solid #F59E0B;
+
+  .highlight {
+    color: #D97706;
+    font-weight: 500;
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 24rpx 32rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
+}
+
+.submitBtn {
+  width: 100%;
+  height: 88rpx;
+  background: $color-primary-gradient;
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+
+  &.disabled {
+    opacity: 0.5;
+  }
+}

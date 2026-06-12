@@ -1,0 +1,265 @@
+@use '@/styles/variables.scss' as *;
+
+.holeCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &.folded {
+    opacity: 0.6;
+
+    .content {
+      @include text-ellipsis-multi(1);
+      filter: blur(4rpx);
+    }
+
+    .foldOverlay {
+      display: flex;
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-md;
+
+    .userInfo {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      .avatar {
+        width: 72rpx;
+        height: 72rpx;
+        border-radius: $radius-round;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40rpx;
+        line-height: 1;
+      }
+
+      .userMeta {
+        .name {
+          font-size: $font-size-sm;
+          font-weight: $font-weight-medium;
+          color: $color-text-primary;
+          margin-bottom: 4rpx;
+        }
+
+        .time {
+          font-size: $font-size-xs;
+          color: $color-text-tertiary;
+        }
+      }
+    }
+
+    .headerRight {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      .location {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+        display: flex;
+        align-items: center;
+        gap: 4rpx;
+      }
+
+      .moreBtn {
+        width: 56rpx;
+        height: 56rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32rpx;
+        color: $color-text-tertiary;
+        border-radius: $radius-round;
+        transition: all $transition-base;
+
+        &:active {
+          background: $color-bg-hover;
+        }
+      }
+    }
+  }
+
+  .content {
+    font-size: $font-size-md;
+    color: $color-text-primary;
+    line-height: $line-height-loose;
+    margin-bottom: $spacing-md;
+    word-break: break-all;
+  }
+
+  .voiceContent {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+    background: $color-bg-tag;
+    border-radius: $radius-md;
+    margin-bottom: $spacing-md;
+
+    .playBtn {
+      width: 64rpx;
+      height: 64rpx;
+      border-radius: $radius-round;
+      background: $color-primary;
+      color: $color-text-white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28rpx;
+
+      &.playing {
+        animation: pulse 1s ease-in-out infinite;
+      }
+    }
+
+    .duration {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+    }
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+
+    .modeTag {
+      padding: 6rpx 16rpx;
+      border-radius: $radius-sm;
+      font-size: $font-size-xs;
+      background: $color-bg-tag;
+      color: $color-primary;
+    }
+  }
+
+  .expireInfo {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    margin-bottom: $spacing-md;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: $spacing-md;
+    border-top: 1rpx solid $color-divider;
+
+    .actionItem {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8rpx;
+      padding: $spacing-sm 0;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      transition: all $transition-base;
+
+      &:active {
+        opacity: 0.7;
+      }
+
+      .icon {
+        font-size: 32rpx;
+        line-height: 1;
+      }
+
+      &.liked {
+        color: #FF6B6B;
+      }
+
+      &.hugged {
+        color: #FF8FB1;
+      }
+
+      &.favorited {
+        color: #FFD93D;
+      }
+
+      &.comment:hover {
+        color: $color-primary;
+      }
+    }
+  }
+
+  .foldOverlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: $radius-lg;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    z-index: 10;
+  }
+
+  .actionSheet {
+    .sheetItem {
+      padding: $spacing-lg;
+      text-align: center;
+      font-size: $font-size-md;
+      color: $color-text-primary;
+      border-bottom: 1rpx solid $color-divider;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &.danger {
+        color: $color-error;
+      }
+
+      &:active {
+        background: $color-bg-hover;
+      }
+    }
+
+    .sheetCancel {
+      margin-top: $spacing-sm;
+      padding: $spacing-lg;
+      text-align: center;
+      font-size: $font-size-md;
+      color: $color-text-secondary;
+      background: $color-bg-card;
+      border-radius: $radius-lg;
+
+      &:active {
+        background: $color-bg-hover;
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
