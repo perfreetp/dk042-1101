@@ -72,19 +72,13 @@ const PublishPage: React.FC = () => {
 
   const handlePublishWithDraft = useCallback(async () => {
     if (currentDraft) {
-      const originalPublish = handlePublish;
-      const deleteDraftAfterPublish = async () => {
-        await originalPublish();
-        try {
-          await deleteDraft(currentDraft.id);
-        } catch (error) {
-          console.error('[PublishPage] 删除草稿失败', error);
-        }
-      };
-      await deleteDraftAfterPublish();
-    } else {
-      await handlePublish();
+      try {
+        await deleteDraft(currentDraft.id);
+      } catch (error) {
+        console.error('[PublishPage] 删除草稿失败', error);
+      }
     }
+    await handlePublish();
   }, [currentDraft, handlePublish]);
 
   const handleEmotionSelect = useCallback((type: EmotionType) => {

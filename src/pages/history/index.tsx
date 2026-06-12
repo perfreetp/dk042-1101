@@ -93,7 +93,7 @@ const HistoryPage: React.FC = () => {
   return (
     <View className={styles.historyPage}>
       <Text className={styles.tip}>
-        这里是你发布过的所有树洞记录。已过期的树洞将不再在广场中隐藏，但你仍可以查看。
+        这里是你发布过的所有树洞记录。已过期的树洞将不再在广场中显示，但你仍可以查看。
       </Text>
 
       <View className={styles.header}>
@@ -122,7 +122,7 @@ const HistoryPage: React.FC = () => {
           <Text className={styles.emptyDesc}>
             {tab === 'active' ? '你的树洞都已过期或被删除' :
              tab === 'expired' ? '发布的树洞还在有效期内' :
-             '在这里记录你的心情，让陌生人的匿名倾诉吧'}
+             '在这里记录你的心情，匿名倾诉给陌生人听'}
           </Text>
           <View className={styles.createBtn} onClick={handleCreate}>
             <Text>去发布树洞</Text>

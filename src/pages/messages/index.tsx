@@ -53,11 +53,16 @@ const MessagesPage: React.FC = () => {
   }, []);
 
   const handleMessageClick = useCallback((message: Message) => {
-    if (!message.isRead) return;
-    markAsRead(message.id);
-    setMessages(prev =>
-      prev.map(m => (m.id === message.id ? { ...m, isRead: true } : m))
-    );
+    if (!message.isRead) {
+      markAsRead(message.id);
+      setMessages(prev =>
+        prev.map(m => (m.id === message.id ? { ...m, isRead: true } : m))
+      );
+      setUnreadCount(prev => ({
+        ...prev,
+        [message.type]: Math.max(0, prev[message.type] - 1),
+      }));
+    }
     if (message.holeId) {
       Taro.navigateTo({
         url: `/pages/detail/index?id=${message.holeId}`,
